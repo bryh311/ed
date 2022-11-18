@@ -1,4 +1,5 @@
-#! usr/bin/ruby
+#! /home/bryce/.rbenv/shims/ruby
+##! /usr/bin/ruby use this for most people
 # An implementation of ed written in ruby
 # Copyright (C) 2022 Bryce Hill
 #
@@ -78,11 +79,11 @@ while true
     # writes output of a sys command to the buffer 
     if command[0] == "r"
         sys_command = command[3..command.length - 1]
-        ouput = `#{sys_command}`
-        ouput.each_line do |line|
+        output = `#{sys_command}`
+        output.each_line do |line|
             $buffer.push line
         end
-        puts ouput.length
+        puts output.length
         $buffer_length += output.length
         # p $buffer
     elsif command[0..1] == ",p"
@@ -125,12 +126,18 @@ while true
         command_split = command.split("/")
         $buffer_length -= $buffer[$current_line].length
         if command_split.length >= 3
-            $buffer[$current_line].sub!(command_split[1], command_split[2])
+
+            item = Regexp.new(command_split[1])
+            replace = command_split[2]
+
+            $buffer[$current_line].gsub!(item, replace)
+        
             if command_split.length > 3
                 if command_split[3] == "p"
                     puts $buffer[$current_line]
                 end
             end
+
         else 
             puts "invalid command!"
         end
